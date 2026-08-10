@@ -22,12 +22,13 @@ echo "--- version checks ---"
 # --- Lua syntax ---
 echo ""
 echo "--- lua syntax ---"
+LUA_BIN="${LUA_BIN:-lua}"
 for f in main.lua _meta.lua; do
-    if lua -e "loadfile('$f')()" 2>/dev/null; then
+    if "$LUA_BIN" -e "loadfile('$f')()" 2>/dev/null; then
         pass "$f loads"
     else
         # loadfile alone (syntax check only)
-        if lua -e "assert(loadfile('$f'))" 2>/dev/null; then
+        if "$LUA_BIN" -e "assert(loadfile('$f'))" 2>/dev/null; then
             pass "$f parses"
         else
             fail "$f has syntax errors"
@@ -91,21 +92,34 @@ for f in bin/*.sh; do
     fi
 done
 
-# --- TUN fallback in start scripts ---
+# --- Networking feature checks ---
 echo ""
 echo "--- feature checks ---"
-for f in bin/start_tailscale.sh bin/start_tailscale_headscale.sh; do
-    if grep -q 'userspace-networking' "$f"; then
-        pass "$f has userspace-networking fallback"
-    else
-        fail "$f missing userspace-networking fallback"
-    fi
-    if grep -q 'socks5-server' "$f"; then
-        pass "$f has SOCKS5 proxy"
-    else
-        fail "$f missing SOCKS5 proxy"
-    fi
-done
+if grep -q 'userspace-networking' main.lua; then
+    pass "main.lua has userspace-networking fallback"
+else
+    fail "main.lua missing userspace-networking fallback"
+fi
+if grep -q 'socks5-server' bin/start_tailscale.sh; then
+    pass "bin/start_tailscale.sh has SOCKS5 proxy"
+else
+    fail "bin/start_tailscale.sh missing SOCKS5 proxy"
+fi
+if grep -q 'outbound-http-proxy-listen' bin/start_tailscale.sh; then
+    pass "bin/start_tailscale.sh has HTTP CONNECT proxy"
+else
+    fail "bin/start_tailscale.sh missing HTTP CONNECT proxy"
+fi
+
+# --- Shell scripts must remain LF-only ---
+CR="$(printf '\r')"
+BAD_CRLF="$(find . -type f -name '*.sh' -exec grep -Il "$CR" {} \; 2>/dev/null)"
+if [ -z "$BAD_CRLF" ]; then
+    pass "all shell scripts use LF line endings"
+else
+    echo "$BAD_CRLF"
+    fail "one or more shell scripts use CRLF line endings"
+fi
 
 # --- Summary ---
 echo ""

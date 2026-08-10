@@ -3,6 +3,7 @@ local Device = require("device")
 local UIManager = require("ui/uimanager")
 local WidgetContainer = require("ui/widget/container/widgetcontainer")
 local InfoMessage = require("ui/widget/infomessage")
+local InputDialog = require("ui/widget/inputdialog")
 local logger = require("logger")
 local _ = require("gettext")
 local json = require("json")
@@ -261,7 +262,7 @@ function TailscalePlugin:addToMainMenu(menu_items)
         sorting_hint = "network",
         sub_item_table = {
             {
-                text = _("Tailscale VPN"),
+                text = _("Enable Tailscale"),
                 keep_menu_open = true,
                 checked_func = function() return self:isRunning() end,
                 callback = function(touchmenu_instance)
@@ -273,16 +274,21 @@ function TailscalePlugin:addToMainMenu(menu_items)
                 end,
             },
             { text = _("Status"), callback = function() self:showStatus() end },
-            { text = _("Start/Stop Daemon"), callback = function() self:toggleDaemon() end },
-            { text = _("Install/Update Tailscale"), callback = function() self:installTailscale() end },
             {
-                text = _("Settings / Config"),
+                text = _("Setup"),
                 sub_item_table = {
-                    { text = _("Configure Auth Key"), callback = function() self:configureAuthKey() end },
-                    { text = _("Headscale URL info"), callback = function() self:configureHeadscale() end },
+                    { text = _("Install / Update Tailscale"), callback = function() self:installTailscale() end },
+                    { text = _("Set Auth Key"), callback = function() self:configureAuthKey() end },
+                    { text = _("Set Headscale URL"), callback = function() self:configureHeadscale() end },
                     { text = _("Uninstall Tailscale"), callback = function() self:uninstallTailscale() end },
                 }
-            }
+            },
+            {
+                text = _("Advanced"),
+                sub_item_table = {
+                    { text = _("Start / Stop Daemon"), callback = function() self:toggleDaemon() end },
+                }
+            },
         }
     }
 end
@@ -470,36 +476,86 @@ end
 -- ─── configuration ────────────────────────────────────────────────
 
 function TailscalePlugin:configureAuthKey()
-    local key = self:readAuthKey()
-    if key then
-        local display = key:sub(1, 12) .. "..."
-        UIManager:show(InfoMessage:new{
-            text = _("Auth key found: " .. display .. "\nRestart Tailscale to apply."),
-            timeout = 4,
-        })
-    else
-        UIManager:show(InfoMessage:new{
-            text = _("No valid auth key found.\nEdit:\n" .. self:getAuthKeyPath()
-                .. "\nAdd a Tailscale (tskey-) or Headscale (hskey-auth-) key."),
-            timeout = 8,
-        })
-    end
+    local current = self:readAuthKey() or ""
+    local dlg
+    dlg = InputDialog:new{
+        title = _("Set Tailscale Auth Key"),
+        input = current,
+        input_hint = _("tskey-auth-..."),
+        description = _("Paste a Tailscale auth key (tskey-) or Headscale auth key (hskey-auth-). Leave blank to clear the saved key."),
+        buttons = {
+            {
+                { text = _("Cancel"), callback = function() UIManager:close(dlg) end },
+                {
+                    text = _("Save"),
+                    is_enter_default = true,
+                    callback = function()
+                        local key = dlg:getInputText():match("^%s*(.-)%s*$")
+                        if key ~= "" and not key:match("^tskey%-") and not key:match("^hskey%-auth%-") then
+                            UIManager:show(InfoMessage:new{ text = _("Invalid auth key. Expected a tskey- or hskey-auth- key."), timeout = 5 })
+                            return
+                        end
+                        local f = io.open(self:getAuthKeyPath(), "w")
+                        if not f then
+                            UIManager:close(dlg)
+                            UIManager:show(InfoMessage:new{ text = _("Failed to save auth key."), timeout = 4 })
+                            return
+                        end
+                        f:write(key, "\n")
+                        f:close()
+                        UIManager:close(dlg)
+                        UIManager:show(InfoMessage:new{ text = key == "" and _("Auth key cleared.") or _("Auth key saved. Restart Tailscale to apply."), timeout = 3 })
+                    end,
+                },
+            },
+        },
+    }
+    UIManager:show(dlg)
 end
 
 function TailscalePlugin:configureHeadscale()
-    local url = self:readHeadscaleUrl()
-    if url then
-        UIManager:show(InfoMessage:new{
-            text = _("Headscale URL: " .. url .. "\nRemove " .. self:getHeadscaleUrlPath() .. " to disable."),
-            timeout = 6,
-        })
-    else
-        UIManager:show(InfoMessage:new{
-            text = _("No Headscale URL configured.\nCreate " .. self:getHeadscaleUrlPath()
-                .. "\nwith your Headscale server URL.\nSCP the file into place."),
-            timeout = 8,
-        })
-    end
+    local current = self:readHeadscaleUrl() or ""
+    local dlg
+    dlg = InputDialog:new{
+        title = _("Set Headscale URL"),
+        input = current,
+        input_hint = _("https://headscale.example.com"),
+        description = _("Enter the Headscale login-server URL. Leave blank to use the default Tailscale service."),
+        buttons = {
+            {
+                { text = _("Cancel"), callback = function() UIManager:close(dlg) end },
+                {
+                    text = _("Save"),
+                    is_enter_default = true,
+                    callback = function()
+                        local url = dlg:getInputText():match("^%s*(.-)%s*$")
+                        if url ~= "" and not url:match("^https?://") then
+                            UIManager:show(InfoMessage:new{ text = _("Invalid Headscale URL. Use http:// or https://."), timeout = 5 })
+                            return
+                        end
+                        local path = self:getHeadscaleUrlPath()
+                        if url == "" then
+                            os.remove(path)
+                            UIManager:close(dlg)
+                            UIManager:show(InfoMessage:new{ text = _("Headscale URL cleared. Tailscale's default login server will be used."), timeout = 4 })
+                            return
+                        end
+                        local f = io.open(path, "w")
+                        if not f then
+                            UIManager:close(dlg)
+                            UIManager:show(InfoMessage:new{ text = _("Failed to save Headscale URL."), timeout = 4 })
+                            return
+                        end
+                        f:write(url, "\n")
+                        f:close()
+                        UIManager:close(dlg)
+                        UIManager:show(InfoMessage:new{ text = _("Headscale URL saved. Restart Tailscale to apply."), timeout = 4 })
+                    end,
+                },
+            },
+        },
+    }
+    UIManager:show(dlg)
 end
 
 function TailscalePlugin:uninstallTailscale()

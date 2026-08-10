@@ -17,34 +17,23 @@ Pairs well with [koreader-syncthing](https://github.com/jasonchoimtt/koreader-sy
    - **Kobo**: `/mnt/onboard/.adds/koreader/plugins/`
    - **PocketBook**: `/mnt/ext1/koreader/plugins/`
 2. Restart KOReader.
-3. In KOReader: Menu → Plugins → Tailscale VPN → Install/Update Tailscale.
+3. In KOReader: Menu → Plugins → Tailscale VPN → Setup → Install / Update Tailscale.
 
 **Note**: Installation downloads ~57 MB. You can pre-download binaries and transfer via SCP/SSH to the plugin's `bin/` directory (default location depends on device).
 
 ## Setup
 
-1. **Configure Auth Key**:
-   Copy the auth.key file to the Tailscale `bin/` directory. Default locations:
-   - **Kindle**: `/mnt/us/koreader/plugins/tailscale.koplugin/bin/auth.key`
-   - **Kobo**: `/mnt/onboard/.adds/koreader/plugins/tailscale.koplugin/bin/auth.key`
-   - **PocketBook**: `/mnt/ext1/tailscale/bin/auth.key` (external storage)
-   ```sh
-   # Kindle default
-   scp -P 2222 auth.key user@kindle-ip:/mnt/us/koreader/plugins/tailscale.koplugin/bin/auth.key
-   # Kobo plugin directory (typical location)
-   scp -P 2222 auth.key user@kobo-ip:/mnt/onboard/.adds/koreader/plugins/tailscale.koplugin/bin/auth.key
-   # PocketBook external storage
-   scp -P 2222 auth.key user@pocketbook-ip:/mnt/ext1/tailscale/bin/auth.key
-   ```
+1. **Set the Auth Key in KOReader**:
+   Open **Tailscale VPN → Setup → Set Auth Key**, paste a Tailscale (`tskey-`) or Headscale (`hskey-auth-`) auth key, and tap **Save**. The plugin stores it in `auth.key` in the managed Tailscale `bin/` directory.
 
-2. **(Optional) Use a self-hosted Headscale server**:
-   If you run Headscale and want your device to use it instead of tailscale.com, create a file `headscale.url` in the Tailscale `bin/` directory. Default locations:
-   - **Kindle**: `/mnt/us/koreader/plugins/tailscale.koplugin/bin/headscale.url`
-   - **Kobo**: `/mnt/onboard/.adds/koreader/plugins/tailscale.koplugin/bin/headscale.url`
-   - **PocketBook**: `/mnt/ext1/tailscale/bin/headscale.url` (external storage)
-   The plugin exposes a menu item *Headscale URL info* which shows the currently configured URL and instructions for updating it.
+   Existing `auth.key` files are still supported. Advanced users can continue to copy or edit the file manually if preferred.
 
-3. Menu → Network → Tailscale VPN → toggle **On**.
+2. **(Optional) Set a self-hosted Headscale server in KOReader**:
+   Open **Tailscale VPN → Setup → Set Headscale URL**, enter the full `http://` or `https://` login-server URL, and tap **Save**. Leave the field blank and save to return to the default Tailscale login server.
+
+   Existing `headscale.url` files are still supported and can also be managed manually if needed.
+
+3. Open **Tailscale VPN → Enable Tailscale** to connect. The menu item is checked while the daemon is running.
 
 ## Proxy
 
@@ -97,10 +86,13 @@ If installation fails due to insufficient space:
 
 ## Plugin Menu Commands
 
-- **Tailscale VPN**: Toggle connection.
-- **Status**: Show device IP and info.
-- **Install/Update Tailscale**: Download and install binaries.
-- **Uninstall Tailscale**: Stop and remove Tailscale files (removes auth key).
+- **Enable Tailscale**: Toggle the Tailscale connection; the item is checked while the daemon is running.
+- **Status**: Show daemon state, Tailscale IPs, and device name.
+- **Setup → Install / Update Tailscale**: Download and install or update the binaries.
+- **Setup → Set Auth Key**: Enter, replace, or clear the Tailscale/Headscale auth key directly in KOReader.
+- **Setup → Set Headscale URL**: Enter, replace, or clear the Headscale login-server URL directly in KOReader.
+- **Setup → Uninstall Tailscale**: Stop and remove Tailscale files (including the auth key).
+- **Advanced → Start / Stop Daemon**: Control `tailscaled` independently for troubleshooting.
 
 ## Files Location
 
@@ -114,8 +106,8 @@ Logs (`tailscale.log`, `tailscaled.log`) and configuration files (`auth.key`, `h
 
 ## Uninstall / Reinstall
 
-1. **Uninstall**: Menu → Plugins → Tailscale VPN → Uninstall Tailscale.
-2. **Reinstall**: Menu → Plugins → Tailscale VPN → Install/Update Tailscale.
+1. **Uninstall**: Menu → Plugins → Tailscale VPN → Setup → Uninstall Tailscale.
+2. **Reinstall**: Menu → Plugins → Tailscale VPN → Setup → Install / Update Tailscale.
 
 You may want to backup your auth.key file (located in the plugin's `bin/` directory) by moving it to `auth.key.backup` or similar before uninstalling, and restore its name after reinstalling.
 
