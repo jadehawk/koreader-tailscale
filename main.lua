@@ -356,12 +356,19 @@ function TailscalePlugin:runInstallation()
     if self:binariesExist() then
         local daemon_running = self:isRunning()
         local msg = _("Installation complete!")
+        local fallback_ver = result:match("TS_FALLBACK_USED=([0-9%.]+)")
+        local detected_ver = result:match("TS_LATEST_DETECTED=([0-9%.]+)")
+        if fallback_ver then
+            msg = msg .. _("\n\nLatest-version detection failed.\nUsed fallback Tailscale version: ") .. fallback_ver
+        elseif detected_ver then
+            msg = msg .. _("\nTailscale version: ") .. detected_ver
+        end
         if daemon_running then
             msg = msg .. _("\nDaemon auto-started.")
         else
             msg = msg .. _("\nAdd Auth Key + Start daemon to connect.")
         end
-        UIManager:show(InfoMessage:new{ text = msg, timeout = 6 })
+        UIManager:show(InfoMessage:new{ text = msg, timeout = fallback_ver and 10 or 6 })
     else
         UIManager:show(InfoMessage:new{ text = _("Installation may have failed. Check logs."), timeout = 6 })
     end

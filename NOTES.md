@@ -38,11 +38,11 @@ If `Install/Update Tailscale` fails (no WiFi, slow connection):
 
 ```sh
 # On your computer
-wget https://pkgs.tailscale.com/stable/tailscale_1.96.2_arm.tgz
+wget https://pkgs.tailscale.com/stable/tailscale_1.102.2_arm.tgz
 
 # Transfer to device, then on-device
 cd /<path-to-plugin>/tailscale.koplugin/bin
-tar xzf tailscale_1.96.2_arm.tgz
+tar xzf tailscale_1.102.2_arm.tgz
 mv tailscale_*/tailscale tailscale_*/tailscaled ./
 rm -rf tailscale_*
 chmod +x tailscale tailscaled

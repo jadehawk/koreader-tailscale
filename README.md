@@ -147,9 +147,9 @@ Download the appropriate binaries for your device architecture (ARMv7/ARMv8/ARM6
 
 ```bash
 # On your computer
-wget https://pkgs.tailscale.com/stable/tailscale_1.94.2_arm.tgz
+wget https://pkgs.tailscale.com/stable/tailscale_1.102.2_arm.tgz
 # or
-curl -O https://pkgs.tailscale.com/stable/tailscale_1.94.2_arm.tgz
+curl -O https://pkgs.tailscale.com/stable/tailscale_1.102.2_arm.tgz
 ```
 
 ### 2. Transfer to Your Device
@@ -158,10 +158,10 @@ Copy the archive to your e-reader:
 
 ```bash
 # For Kindle (SSH on port 2222)
-scp -P 2222 tailscale_1.94.2_arm.tgz root@<device-ip>:/mnt/us/koreader/plugins/tailscale.koplugin/bin/
+scp -P 2222 tailscale_1.102.2_arm.tgz root@<device-ip>:/mnt/us/koreader/plugins/tailscale.koplugin/bin/
 
 # For Kobo (plugin directory)
-scp tailscale_1.94.2_arm.tgz root@<device-ip>:/mnt/onboard/.adds/koreader/plugins/tailscale.koplugin/bin/
+scp tailscale_1.102.2_arm.tgz root@<device-ip>:/mnt/onboard/.adds/koreader/plugins/tailscale.koplugin/bin/
 ```
 
 ### 3. Extract and Install
@@ -173,11 +173,11 @@ SSH into your device and run:
 cd /mnt/us/koreader/plugins/tailscale.koplugin/bin  # or /mnt/onboard/.adds/koreader/plugins/tailscale.koplugin/bin for Kobo
 
 # Extract
-tar xzf tailscale_1.94.2_arm.tgz
+tar xzf tailscale_1.102.2_arm.tgz
 
 # Move binaries
 mv tailscale_*/tailscale tailscale_*/tailscaled ./
-rm -rf tailscale_* tailscale_1.94.2_arm.tgz
+rm -rf tailscale_* tailscale_1.102.2_arm.tgz
 
 # Make executable
 chmod +x tailscale tailscaled

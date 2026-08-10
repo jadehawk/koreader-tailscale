@@ -3,7 +3,7 @@
 
 set -e
 
-TS_FALLBACK_VER="1.96.2"
+TS_FALLBACK_VER="1.102.2"
 BIN_DIR="${TS_BIN:-$(cd "$(dirname "$0")" && pwd)}"
 ARCH="${TS_ARCH:-arm}"
 
@@ -18,9 +18,18 @@ if [ -z "$_json" ]; then
     _json=$(curl -sf "https://pkgs.tailscale.com/stable/?mode=json" 2>/dev/null)
 fi
 if [ -n "$_json" ]; then
-    TS_VER=$(printf '%s' "$_json" | grep -o '"version":"[^"]*"' | head -1 | grep -o '[0-9][0-9.]*')
+    TS_VER=$(printf '%s' "$_json" | grep -Eo '"TarballsVersion"[[:space:]]*:[[:space:]]*"[0-9][0-9.]*"' | head -1 | grep -Eo '[0-9]+(\.[0-9]+)+')
+    if [ -z "$TS_VER" ]; then
+        TS_VER=$(printf '%s' "$_json" | grep -Eo '"Version"[[:space:]]*:[[:space:]]*"[0-9][0-9.]*"' | head -1 | grep -Eo '[0-9]+(\.[0-9]+)+')
+    fi
 fi
-[ -z "$TS_VER" ] && TS_VER="$TS_FALLBACK_VER"
+if [ -z "$TS_VER" ]; then
+    TS_VER="$TS_FALLBACK_VER"
+    printf 'TS_FALLBACK_USED=%s\n' "$TS_VER"
+    printf 'WARNING: Could not detect latest stable Tailscale version; using fallback %s.\n' "$TS_VER"
+else
+    printf 'TS_LATEST_DETECTED=%s\n' "$TS_VER"
+fi
 set -e
 
 # Skip if already on this version

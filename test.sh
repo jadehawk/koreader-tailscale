@@ -115,6 +115,16 @@ if grep -q 'function TailscalePlugin:ensureAuthKeyFile()' main.lua && grep -q '\
 else
     fail "plugin does not ensure a blank auth.key file for manual editing"
 fi
+if grep -q 'TS_FALLBACK_VER="1.102.2"' bin/install-tailscale.sh && grep -q 'TarballsVersion' bin/install-tailscale.sh; then
+    pass "installer detects current tarball version with 1.102.2 fallback"
+else
+    fail "installer latest-version detection or fallback is stale"
+fi
+if grep -q 'TS_FALLBACK_USED=' bin/install-tailscale.sh && grep -q 'Latest-version detection failed' main.lua; then
+    pass "fallback-version use is reported to the user"
+else
+    fail "fallback-version use is not reported to the user"
+fi
 if grep -q 'socks5-server' bin/start_tailscale.sh; then
     pass "bin/start_tailscale.sh has SOCKS5 proxy"
 else
