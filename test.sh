@@ -110,6 +110,11 @@ if grep -q 'if not self:readAuthKey() then' main.lua && grep -q 'Generate auth k
 else
     fail "Enable Tailscale missing auth-key preflight guard"
 fi
+if grep -q 'function TailscalePlugin:ensureAuthKeyFile()' main.lua && grep -q '\[ -f auth.key \] || : > auth.key' bin/install-tailscale.sh; then
+    pass "plugin ensures a blank auth.key file exists for manual editing"
+else
+    fail "plugin does not ensure a blank auth.key file for manual editing"
+fi
 if grep -q 'socks5-server' bin/start_tailscale.sh; then
     pass "bin/start_tailscale.sh has SOCKS5 proxy"
 else

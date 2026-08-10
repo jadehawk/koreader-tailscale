@@ -44,4 +44,5 @@ mv -f tailscale_*/tailscale tailscale_*/tailscaled ./ 2>/dev/null || true
 rm -rf tailscale_* 2>/dev/null || true
 chmod +x ./tailscale ./tailscaled 2>/dev/null || true
 [ -f auth.key ] || : > auth.key
+chmod 0600 auth.key 2>/dev/null || true
 exit 0

@@ -38,10 +38,17 @@ The builder verifies the final ZIP manifest before reporting success. Generated 
 
 ## Setup
 
-1. **Set the Auth Key in KOReader**:
-   Open **Tailscale VPN → Setup → Set Auth Key**, paste a Tailscale (`tskey-`) or Headscale (`hskey-auth-`) auth key, and tap **Save**. The plugin stores it in `auth.key` in the managed Tailscale `bin/` directory.
+1. **Set the Auth Key**:
+   The easiest on-device method is **Tailscale VPN → Setup → Set Auth Key**. Paste a Tailscale (`tskey-`) or Headscale (`hskey-auth-`) auth key and tap **Save**.
 
-   Existing `auth.key` files are still supported. Advanced users can continue to copy or edit the file manually if preferred.
+   Because auth keys are long, you can instead edit the plugin's `auth.key` file directly from a computer or shell. The plugin creates this file automatically as a blank file, so you do not need to create it manually or work out its permissions. Paste the complete key as the only line in the file and save it.
+
+   Typical locations are:
+   - **Kindle**: `/mnt/us/koreader/plugins/tailscale.koplugin/bin/auth.key`
+   - **Kobo**: `/mnt/onboard/.adds/koreader/plugins/tailscale.koplugin/bin/auth.key`
+   - **PocketBook**: `/mnt/ext1/tailscale/bin/auth.key`
+
+   The plugin validates the file contents when enabling Tailscale. An empty, whitespace-only, comment-only, or malformed file is treated as **no auth key configured**; merely having an `auth.key` file is not enough.
 
 2. **(Optional) Set a self-hosted Headscale server in KOReader**:
    Open **Tailscale VPN → Setup → Set Headscale URL**, enter the full `http://` or `https://` login-server URL, and tap **Save**. Leave the field blank and save to return to the default Tailscale login server.

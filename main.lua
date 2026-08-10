@@ -40,6 +40,7 @@ function TailscalePlugin:init()
     end
     self.ts_arch = self:detectArch()
     self.ts_bin = self.ts_dir .. "/bin"
+    self:ensureAuthKeyFile()
     logger.info("Tailscale: dir=" .. self.ts_dir .. " arch=" .. self.ts_arch)
 
     if self.ui and self.ui.menu then
@@ -59,6 +60,16 @@ end
 
 function TailscalePlugin:getAuthKeyPath()
     return self:getBinDir() .. "/auth.key"
+end
+
+function TailscalePlugin:ensureAuthKeyFile()
+    os.execute("mkdir -p '" .. self:getBinDir() .. "' 2>/dev/null")
+    local path = self:getAuthKeyPath()
+    local f = io.open(path, "a")
+    if not f then return false end
+    f:close()
+    os.execute("chmod 0600 '" .. path .. "' 2>/dev/null || true")
+    return true
 end
 
 function TailscalePlugin:getHeadscaleUrlPath()
@@ -391,7 +402,7 @@ function TailscalePlugin:connectTailscale()
     end
     if not self:readAuthKey() then
         UIManager:show(InfoMessage:new{
-            text = _("No valid auth key configured.\n\nGenerate one in the Tailscale Admin Console:\nKeys → Auth keys → Generate auth key\nhttps://console.tailscale.com/admin/settings/keys\n\nThen return to:\nSettings → Network → Tailscale VPN → Setup → Set Auth Key"),
+            text = _("No valid auth key configured.\n\nGenerate one in the Tailscale Admin Console:\nKeys → Auth keys → Generate auth key\nhttps://console.tailscale.com/admin/settings/keys\n\nThen either:\n• Settings → Network → Tailscale VPN → Setup → Set Auth Key\n• Edit the existing auth.key file directly and paste the key as its only line.\n\nAuth key file:\n" .. self:getAuthKeyPath()),
             timeout = 12,
         })
         return
@@ -489,7 +500,7 @@ function TailscalePlugin:configureAuthKey()
         title = _("Set Tailscale Auth Key"),
         input = current,
         input_hint = _("tskey-auth-..."),
-        description = _("Paste a Tailscale auth key (tskey-) or Headscale auth key (hskey-auth-). Leave blank to clear the saved key."),
+        description = _("Paste a Tailscale auth key (tskey-) or Headscale auth key (hskey-auth-). Leave blank to clear the saved key. You can also edit auth.key directly on the device if entering a long key on the e-reader is impractical."),
         buttons = {
             {
                 { text = _("Cancel"), callback = function() UIManager:close(dlg) end },
