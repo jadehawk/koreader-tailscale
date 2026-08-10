@@ -259,7 +259,7 @@ function TailscalePlugin:onFlushSettings() end
 function TailscalePlugin:addToMainMenu(menu_items)
     menu_items.tailscale = {
         text = _("Tailscale VPN"),
-        sorting_hint = "network",
+        sorting_hint = "tools",
         sub_item_table = {
             {
                 text = _("Enable Tailscale"),

@@ -17,7 +17,7 @@ Pairs well with [koreader-syncthing](https://github.com/jasonchoimtt/koreader-sy
    - **Kobo**: `/mnt/onboard/.adds/koreader/plugins/`
    - **PocketBook**: `/mnt/ext1/koreader/plugins/`
 2. Restart KOReader.
-3. In KOReader: Menu → Plugins → Tailscale VPN → Setup → Install / Update Tailscale.
+3. In KOReader: Menu → Tools → Tailscale VPN → Setup → Install / Update Tailscale.
 
 **Note**: Installation downloads ~57 MB. You can pre-download binaries and transfer via SCP/SSH to the plugin's `bin/` directory (default location depends on device).
 
@@ -106,8 +106,8 @@ Logs (`tailscale.log`, `tailscaled.log`) and configuration files (`auth.key`, `h
 
 ## Uninstall / Reinstall
 
-1. **Uninstall**: Menu → Plugins → Tailscale VPN → Setup → Uninstall Tailscale.
-2. **Reinstall**: Menu → Plugins → Tailscale VPN → Setup → Install / Update Tailscale.
+1. **Uninstall**: Menu → Tools → Tailscale VPN → Setup → Uninstall Tailscale.
+2. **Reinstall**: Menu → Tools → Tailscale VPN → Setup → Install / Update Tailscale.
 
 You may want to backup your auth.key file (located in the plugin's `bin/` directory) by moving it to `auth.key.backup` or similar before uninstalling, and restore its name after reinstalling.
 
