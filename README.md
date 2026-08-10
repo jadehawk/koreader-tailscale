@@ -16,8 +16,9 @@ Pairs well with [koreader-syncthing](https://github.com/jasonchoimtt/koreader-sy
    - **Kindle**: `/mnt/us/koreader/plugins/`
    - **Kobo**: `/mnt/onboard/.adds/koreader/plugins/`
    - **PocketBook**: `/mnt/ext1/koreader/plugins/`
-2. Restart KOReader.
-3. In KOReader: Menu → Settings → Network → Tailscale VPN → Setup → Install / Update Tailscale.
+2. Optional but recommended before disconnecting from your computer: open the packaged blank `tailscale.koplugin/bin/auth.key` and paste your complete Tailscale/Headscale auth key as the only line. This avoids entering the long key on an e-ink keyboard later.
+3. Restart KOReader.
+4. In KOReader: Menu → Settings → Network → Tailscale VPN → Setup → Install / Update Tailscale.
 
 **Note**: Installation downloads ~57 MB. You can pre-download binaries and transfer via SCP/SSH to the plugin's `bin/` directory (default location depends on device).
 
@@ -29,6 +30,7 @@ The generated archive contains a top-level `tailscale.koplugin/` folder with onl
 
 - `_meta.lua`
 - `main.lua`
+- `bin/auth.key` (blank placeholder for optional pre-configuration)
 - `bin/install-tailscale.sh`
 - `bin/start_tailscale.sh`
 - `bin/stop_tailscale.sh`

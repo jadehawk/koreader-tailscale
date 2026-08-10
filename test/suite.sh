@@ -60,7 +60,7 @@ run_cmd() {
 
 log ""
 log "═══════════════════════════════════════"
-log "  tailscale.koplugin v1.2.0 test suite"
+log "  tailscale.koplugin v1.3.0 test suite"
 log "═══════════════════════════════════════"
 log ""
 
@@ -419,7 +419,7 @@ log ""
 # JSON output for machine parsing
 cat > "$JSON_FILE" << JSONEOF
 {
-  "version": "1.2.0",
+  "version": "1.3.0",
   "passed": $PASS,
   "failed": $FAIL,
   "skipped": $SKIP,

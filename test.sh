@@ -77,7 +77,7 @@ done
 # --- Key files exist ---
 echo ""
 echo "--- structure ---"
-for f in main.lua _meta.lua bin/install-tailscale.sh bin/start_tailscale.sh bin/stop_tailscale.sh bin/uninstall-tailscale.sh; do
+for f in main.lua _meta.lua bin/auth.key bin/install-tailscale.sh bin/start_tailscale.sh bin/stop_tailscale.sh bin/uninstall-tailscale.sh; do
     [ -f "$f" ] && pass "$f exists" || fail "$f missing"
 done
 

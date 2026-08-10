@@ -11,6 +11,7 @@ $MetaPath = Join-Path $Root '_meta.lua'
 $RuntimeFiles = @(
     '_meta.lua',
     'main.lua',
+    'bin/auth.key',
     'bin/install-tailscale.sh',
     'bin/start_tailscale.sh',
     'bin/stop_tailscale.sh',
@@ -45,6 +46,12 @@ foreach ($RelativePath in $RuntimeFiles) {
         throw "Missing required runtime file: $RelativePath"
     }
 }
+
+$AuthKeyTemplate = Join-Path $Root 'bin\auth.key'
+if ((Get-Content -LiteralPath $AuthKeyTemplate -Raw).Trim().Length -ne 0) {
+    throw 'bin/auth.key must remain blank. Refusing to package a real auth key.'
+}
+Write-Host '[OK] Packaged auth.key is blank.'
 
 Write-Host '[*] Checking shell-script line endings...'
 foreach ($RelativePath in $RuntimeFiles | Where-Object { $_ -like '*.sh' }) {
