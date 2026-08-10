@@ -7,7 +7,7 @@ Pairs well with [koreader-syncthing](https://github.com/jasonchoimtt/koreader-sy
 ## Prerequisites
 
 1. **Tailscale Account**: Sign up at [tailscale.com](https://tailscale.com).
-2. **Auth Key**: Create a reusable auth key at [Tailscale Admin Console](https://login.tailscale.com/admin/settings/keys).
+2. **Auth Key**: Open the [Tailscale Admin Console Keys page](https://console.tailscale.com/admin/settings/keys), go to **Auth keys**, select **Generate auth key**, choose the desired options, then copy the generated `tskey-...` value. A reusable key is convenient if you expect to reinstall or re-authenticate the e-reader.
 3. **E-reader with file and/or SSH access**: With KOReader installed. Tested on Kindle PW6 and PW5, and PocketBook devices. Should work on any device running ARMv7 or ARM64 binaries.
 
 ## Installation
@@ -17,7 +17,7 @@ Pairs well with [koreader-syncthing](https://github.com/jasonchoimtt/koreader-sy
    - **Kobo**: `/mnt/onboard/.adds/koreader/plugins/`
    - **PocketBook**: `/mnt/ext1/koreader/plugins/`
 2. Restart KOReader.
-3. In KOReader: Menu → Tools → Tailscale VPN → Setup → Install / Update Tailscale.
+3. In KOReader: Menu → Settings → Network → Tailscale VPN → Setup → Install / Update Tailscale.
 
 **Note**: Installation downloads ~57 MB. You can pre-download binaries and transfer via SCP/SSH to the plugin's `bin/` directory (default location depends on device).
 
@@ -101,7 +101,7 @@ If installation fails due to insufficient space:
 
 ## Plugin Menu Commands
 
-- **Enable Tailscale**: Toggle the Tailscale connection; the item is checked while the daemon is running.
+- **Enable Tailscale**: Toggle the Tailscale connection. Before starting, the plugin requires the Tailscale binaries, a valid Tailscale/Headscale auth key, and working network connectivity; if any prerequisite is missing it shows instructions instead of launching `tailscaled`. The item is checked while the daemon is running.
 - **Status**: Show daemon state, Tailscale IPs, and device name.
 - **Setup → Install / Update Tailscale**: Download and install or update the binaries.
 - **Setup → Set Auth Key**: Enter, replace, or clear the Tailscale/Headscale auth key directly in KOReader.
@@ -121,8 +121,8 @@ Logs (`tailscale.log`, `tailscaled.log`) and configuration files (`auth.key`, `h
 
 ## Uninstall / Reinstall
 
-1. **Uninstall**: Menu → Tools → Tailscale VPN → Setup → Uninstall Tailscale.
-2. **Reinstall**: Menu → Tools → Tailscale VPN → Setup → Install / Update Tailscale.
+1. **Uninstall**: Menu → Settings → Network → Tailscale VPN → Setup → Uninstall Tailscale.
+2. **Reinstall**: Menu → Settings → Network → Tailscale VPN → Setup → Install / Update Tailscale.
 
 You may want to backup your auth.key file (located in the plugin's `bin/` directory) by moving it to `auth.key.backup` or similar before uninstalling, and restore its name after reinstalling.
 

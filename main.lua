@@ -259,7 +259,7 @@ function TailscalePlugin:onFlushSettings() end
 function TailscalePlugin:addToMainMenu(menu_items)
     menu_items.tailscale = {
         text = _("Tailscale VPN"),
-        sorting_hint = "tools",
+        sorting_hint = "network",
         sub_item_table = {
             {
                 text = _("Enable Tailscale"),
@@ -386,6 +386,13 @@ function TailscalePlugin:connectTailscale()
         UIManager:show(InfoMessage:new{
             text = _("Tailscale not installed.\nPlease run 'Install Tailscale' first."),
             timeout = 3,
+        })
+        return
+    end
+    if not self:readAuthKey() then
+        UIManager:show(InfoMessage:new{
+            text = _("No valid auth key configured.\n\nGenerate one in the Tailscale Admin Console:\nKeys → Auth keys → Generate auth key\nhttps://console.tailscale.com/admin/settings/keys\n\nThen return to:\nSettings → Network → Tailscale VPN → Setup → Set Auth Key"),
+            timeout = 12,
         })
         return
     end

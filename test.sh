@@ -100,6 +100,16 @@ if grep -q 'userspace-networking' main.lua; then
 else
     fail "main.lua missing userspace-networking fallback"
 fi
+if grep -q 'sorting_hint = "network"' main.lua; then
+    pass "Tailscale menu is placed under Network"
+else
+    fail "Tailscale menu is not placed under Network"
+fi
+if grep -q 'if not self:readAuthKey() then' main.lua && grep -q 'Generate auth key' main.lua; then
+    pass "Enable Tailscale blocks startup without an auth key"
+else
+    fail "Enable Tailscale missing auth-key preflight guard"
+fi
 if grep -q 'socks5-server' bin/start_tailscale.sh; then
     pass "bin/start_tailscale.sh has SOCKS5 proxy"
 else
