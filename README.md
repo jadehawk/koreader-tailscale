@@ -21,6 +21,21 @@ Pairs well with [koreader-syncthing](https://github.com/jasonchoimtt/koreader-sy
 
 **Note**: Installation downloads ~57 MB. You can pre-download binaries and transfer via SCP/SSH to the plugin's `bin/` directory (default location depends on device).
 
+## Build a Plugin ZIP on Windows
+
+Run `build_plugin.bat` from the repository root. It calls `build_plugin.ps1`, reads the version from `_meta.lua`, validates that all required runtime files exist, refuses to package shell scripts with CR/CRLF line endings, and creates a versioned ZIP in `Builds/`.
+
+The generated archive contains a top-level `tailscale.koplugin/` folder with only the runtime files required by KOReader:
+
+- `_meta.lua`
+- `main.lua`
+- `bin/install-tailscale.sh`
+- `bin/start_tailscale.sh`
+- `bin/stop_tailscale.sh`
+- `bin/uninstall-tailscale.sh`
+
+The builder verifies the final ZIP manifest before reporting success. Generated ZIP files are ignored by Git.
+
 ## Setup
 
 1. **Set the Auth Key in KOReader**:

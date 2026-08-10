@@ -27,10 +27,16 @@ jobs:
         run: |
           TAG="${GITHUB_REF_NAME}"
           ZIP="tailscale.koplugin-${TAG}.zip"
-          mkdir -p /tmp/build/tailscale.koplugin
-          rsync -a --exclude='.git' --exclude='*.zip' --exclude='CLAUDE.md' --exclude='test.sh' \
-            --exclude='NOTES.md' --exclude='README.md' --exclude='LICENSE' --exclude='.github' \
-            . /tmp/build/tailscale.koplugin/
+          PLUGIN_DIR="/tmp/build/tailscale.koplugin"
+
+          mkdir -p "${PLUGIN_DIR}/bin"
+          cp _meta.lua main.lua "${PLUGIN_DIR}/"
+          cp bin/install-tailscale.sh \
+             bin/start_tailscale.sh \
+             bin/stop_tailscale.sh \
+             bin/uninstall-tailscale.sh \
+             "${PLUGIN_DIR}/bin/"
+
           cd /tmp/build
           zip -r "${ZIP}" tailscale.koplugin/
           mv "${ZIP}" "${GITHUB_WORKSPACE}/"
