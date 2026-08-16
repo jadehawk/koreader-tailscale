@@ -3,7 +3,7 @@ return {
     name = "tailscale",
     fullname = _("Tailscale VPN"),
     description = _("Secure remote access and file sync via Tailscale"),
-    author = "Victoria B.",
+    author = "Jadehawk",
     version = "1.3.0",
     dependencies = {},
     can_configure = true,
